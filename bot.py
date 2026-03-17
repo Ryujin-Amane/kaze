@@ -12,7 +12,11 @@ BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
 IG_USERNAME = os.getenv("IG_USERNAME", "YOUR_IG_USERNAME")
 IG_PASSWORD = os.getenv("IG_PASSWORD", "YOUR_IG_PASSWORD")
 
-L = instaloader.Instaloader()
+L = instaloader.Instaloader(
+    user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1",
+    request_timeout=30.0,
+    max_connection_attempts=1,
+)
 
 # Instagram login
 if IG_USERNAME and IG_PASSWORD and IG_USERNAME != "YOUR_IG_USERNAME":
@@ -91,8 +95,9 @@ async def handle_usernames(update: Update, context: ContextTypes.DEFAULT_TYPE):
             print(f"Error fetching {username}: {e}")
 
         # Sleep between requests to reduce rate-limiting risk
+        # Increased to 7 seconds to prevent 429 blocks from Instagram
         if i < len(usernames) - 1:
-            await asyncio.sleep(3)
+            await asyncio.sleep(7)
 
     # Clean up status message
     try:
