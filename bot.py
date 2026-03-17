@@ -22,18 +22,20 @@ L = instaloader.Instaloader(
 if IG_USERNAME and IG_PASSWORD and IG_USERNAME != "YOUR_IG_USERNAME":
     try:
         print(f"Loading session for {IG_USERNAME}...")
-        L.load_session_from_file(IG_USERNAME)
-        print("Session loaded successfully!")
-    except FileNotFoundError:
-        try:
-            print(f"No session found. Logging in to Instagram as {IG_USERNAME}...")
+        # Since we copied it to e:\kaze, we should look relative to the bot
+        session_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"session-{IG_USERNAME}")
+        
+        if os.path.exists(session_file):
+            L.load_session_from_file(IG_USERNAME, filename=session_file)
+            print("Session loaded successfully!")
+        else:
+            print(f"No local session file found at {session_file}. Attempting fallback login...")
             L.login(IG_USERNAME, IG_PASSWORD)
-            L.save_session_to_file()
+            L.save_session_to_file(filename=session_file)
             print("Login successful and session saved!")
-        except Exception as e:
-            print(f"Instagram Login Failed: {e}")
     except Exception as e:
-        print(f"Could not load session: {e}")
+        print(f"Could not load session or login: {e}")
+
 
 
 
