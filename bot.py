@@ -21,11 +21,20 @@ L = instaloader.Instaloader(
 # Instagram login
 if IG_USERNAME and IG_PASSWORD and IG_USERNAME != "YOUR_IG_USERNAME":
     try:
-        print(f"Logging in to Instagram as {IG_USERNAME}...")
-        L.login(IG_USERNAME, IG_PASSWORD)
-        print("Login successful!")
+        print(f"Loading session for {IG_USERNAME}...")
+        L.load_session_from_file(IG_USERNAME)
+        print("Session loaded successfully!")
+    except FileNotFoundError:
+        try:
+            print(f"No session found. Logging in to Instagram as {IG_USERNAME}...")
+            L.login(IG_USERNAME, IG_PASSWORD)
+            L.save_session_to_file()
+            print("Login successful and session saved!")
+        except Exception as e:
+            print(f"Instagram Login Failed: {e}")
     except Exception as e:
-        print(f"Instagram Login Failed: {e}")
+        print(f"Could not load session: {e}")
+
 
 
 def escape_html(text: str) -> str:
